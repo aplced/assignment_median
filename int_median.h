@@ -3,14 +3,41 @@
 
 #include "Median/median.h"
 
-class IntData : public ComperableData<IntData>
+template <class T>
+class NumericData : public ComperableData<NumericData<T>>
 {
     public:
-        IntData(int data)
+        NumericData()
+        {
+        }
+
+        NumericData(T data)
         {
             this->data = data;
         }
-        int compare(const IntData& otherData) override
+
+        NumericData(const NumericData& other)
+        {
+            this->data = other.data;
+        }
+
+        NumericData(const NumericData&& other)
+        {
+            this->data = other.data;
+        }
+
+        NumericData& operator=(const NumericData&& other)
+        {
+            this->data = other.data;
+            return *this;
+        }
+
+        operator T() const 
+        { 
+            return data; 
+        }
+
+        int compare(const NumericData& otherData) const override
         {
             if(data > otherData)
             {
@@ -26,9 +53,13 @@ class IntData : public ComperableData<IntData>
             }
             
         }
-        operator int() const { return data; }
+
+        void set_data(T value)
+        {
+            data = value;
+        }
     private:
-        int data;
+        T data;
 };
 
 #endif

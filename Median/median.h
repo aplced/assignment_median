@@ -8,18 +8,18 @@ using namespace std;
 template <class Data>
 class ComperableData
 {
-    virtual int compare(const Data& otherData) = 0;
+    virtual int compare(const Data& otherData) const = 0;
 };
 
 template <class Data> class MedianData
 {
     public:
-        MedianData() 
+        MedianData(int dataSize = 0) 
         {
             static_assert(std::is_base_of<ComperableData<Data>, Data>::value, "type parameter of this class must derive from ComperableData<Data>");
 
             medianValue = 0;
-            numberData = vector<Data>();
+            numberData = vector<Data>(dataSize);
         }
 
         void add_number(Data number)
@@ -36,17 +36,17 @@ template <class Data> class MedianData
             }
         }
 
-        Data median()
+        Data median() const
         {
             return medianValue;
         }
 
-        Data min()
+        Data min() const
         {
             return numberData[0];
         }
 
-        Data max()
+        Data max() const
         {
             return numberData[numberData.size() - 1];
         }
@@ -54,15 +54,18 @@ template <class Data> class MedianData
     private:
         //Holds a precomputed current median value
         double medianValue;
+
         //A vector containing all of the number data
         vector<Data> numberData;
+
         //Looks up where to insert the new data value in the sorted numberData vector 
-        int insertion_index_lookup(Data data, int low, int high) 
+        int insertion_index_lookup(const Data& data, int low, int high) 
         {
             if (high <= low)
             {
                 return (data.compare(numberData[low]) > 0) ? (low + 1) : low;
             }
+
             int mid = (low + high)/2;
           
             if(data.compare(numberData[mid]) == 0)
@@ -78,12 +81,14 @@ template <class Data> class MedianData
                 return insertion_index_lookup(data, low, mid - 1);
             }       
         }
+
         //Performs a binary search and inserts the new number in its sorted position
-        void binary_insertion_sort(Data data) 
+        void binary_insertion_sort(const Data& data) 
         {
             int insertPos = insertion_index_lookup(data, 0, numberData.size() - 1);
             numberData.insert(numberData.begin() + insertPos, data);
         }
+
         //Calculate median of vector
         void precompute_median_value()
         {

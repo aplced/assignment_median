@@ -14,7 +14,7 @@ using namespace std::chrono;
 void testInputExpectedOutput(vector<int> testData, double expectedMedian)
 {
     cout << "Test input [";
-    MedianData<IntData> md = MedianData<IntData>();
+    auto md = MedianData<NumericData<int>>();
     for_each(
         testData.begin(), 
         testData.end(), 
@@ -31,36 +31,39 @@ void testInputExpectedOutput(vector<int> testData, double expectedMedian)
 
 void stress_test()
 {
-    const int stressTestSize = 1000000;
-    srand (time(NULL));
-    MedianData<IntData> md = MedianData<IntData>();
-    MedianData<IntData> insertionTimes = MedianData<IntData>();
+    const int stressTestSize = 100000;
+    cout << "Runnint stress_test of [" << stressTestSize << "] insertions" << endl;
 
-    auto testStart = high_resolution_clock::now();
+    srand (time(NULL));
+    auto md = MedianData<NumericData<int>>(stressTestSize + 1);
+    auto insertionTimes = MedianData<NumericData<long long>>(stressTestSize + 1);
+
+    long totalInsertionsRunTime = 0;
+    NumericData<int> tmpData = NumericData<int>();
+    NumericData<long long> tmpTime = NumericData<long long>();
     for (int i = 0; i < stressTestSize; i++)
     {
-        auto start = high_resolution_clock::now(); 
-        md.add_number(rand());
+        tmpData.set_data(rand() % 100 + 1);
+        auto start = high_resolution_clock::now();
+        md.add_number(tmpData);
         auto stop = high_resolution_clock::now(); 
-        auto duration = duration_cast<nanoseconds>(stop - start); 
-        insertionTimes.add_number(duration.count());
+        tmpTime.set_data(duration_cast<nanoseconds>(stop - start).count()); 
+        insertionTimes.add_number(tmpTime);
+        totalInsertionsRunTime += duration_cast<nanoseconds>(stop - start).count();
     }
-    auto testStop = high_resolution_clock::now();
-    auto testDuration = duration_cast<nanoseconds>(testStop - testStart); 
 
     cout << "Accumulated median value " << md.median() << " from " << stressTestSize << " random int insertions" << endl;
-    cout << "Times in nanoseconds" << endl;
-    cout << "Total time [" << testDuration.count() << "] Average time per insertion ]" << testDuration.count() / stressTestSize << "]" << endl;
-    cout << "Insertion times Min[" << insertionTimes.min() << "] Max[" << insertionTimes.max() << "] Median[" << insertionTimes.median() << "]" << endl;
+    cout << "Total time [" << totalInsertionsRunTime << "]ns Average time per insertion [" << totalInsertionsRunTime / stressTestSize << "]ns" << endl;
+    cout << "Insertion times Min[" << insertionTimes.min() << "]ns Max[" << insertionTimes.max() << "]ns Median[" << insertionTimes.median() << "]ns" << endl;
 }
 
 int main()
 {
-    cout << "Running sanity tests" << endl;
+    testInputExpectedOutput({ 3, 1, 2 }, 2);
+    testInputExpectedOutput({ 3, 1, 4, 2 }, 2);
     testInputExpectedOutput({ 1, 2, 2, 3, 4, 7, 9 }, 3);
     testInputExpectedOutput({ 9, 2, 2, 3, 4, 7, 1 }, 3);
     testInputExpectedOutput({ 2, 9, 1, 3, 7, 4, 2 }, 3);
 
-    cout << "Runnint stress_test:" << endl;
     stress_test();
 }

@@ -1,13 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
-
-# specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# set the project name
+cmake_minimum_required(VERSION 3.0)
 project(Median)
 
-# add the executable
-add_executable(Median main.cpp)
+set(SOURCE main.cpp)
 
-target_include_directories(Median PUBLIC "${PROJECT_BINARY_DIR}")
+add_executable(${PROJECT_NAME} ${SOURCE})
