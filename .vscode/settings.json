@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp",
+        "*.tcc": "cpp"
+    }
+}
