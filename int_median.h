@@ -3,8 +3,8 @@
 
 #include "Median/median.h"
 
-template <class T>
-class NumericData : public ComperableData<NumericData<T>>
+template <typename T>
+class NumericData : public ComperableData<NumericData<T>, double>
 {
     public:
         NumericData()
@@ -50,8 +50,27 @@ class NumericData : public ComperableData<NumericData<T>>
             else
             {
                 return 0;
-            }
-            
+            }       
+        }
+
+        int compare(const double& medianValue) const override
+        {
+            return compare(NumericData((T)medianValue));
+        }
+
+        static double max_median()
+        {
+            return (double)numeric_limits<T>::max();
+        }
+
+        double as_median() const override
+        {
+            return (double)data;
+        }
+
+        double median_with(const NumericData& otherData) const override
+        {
+            return (data + otherData) / 2.0;
         }
 
         void set_data(T value)

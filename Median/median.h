@@ -1,106 +1,120 @@
 #ifndef __MEDIAN_H__
 #define __MEDIAN_H__
 
-#include <vector>
+#include <algorithm>
+#include <queue>
 
 using namespace std;
 
-template <class Data>
+template <typename Data, typename MedianType>
 class ComperableData
 {
+public:
+    typedef Data value_type; 
+
     virtual int compare(const Data& otherData) const = 0;
+
+    virtual int compare(const MedianType& medianValue) const = 0;
+    
+    virtual MedianType as_median() const = 0;
+
+    virtual MedianType median_with(const Data& otherData) const = 0;
+
+    bool operator >(const Data& otherData) const
+    {
+        return compare(otherData) > 0;
+    }
+
+    bool operator <(const Data& otherData) const
+    {
+        return compare(otherData) < 0;
+    }
 };
 
-template <class Data> class MedianData
+template <typename Data, typename MedianType> class MedianData
 {
     public:
-        MedianData(int dataSize = 0) 
+        MedianData() 
         {
-            static_assert(std::is_base_of<ComperableData<Data>, Data>::value, "type parameter of this class must derive from ComperableData<Data>");
+            static_assert(std::is_base_of<ComperableData<Data, MedianType>, Data>::value, "type parameter of this class must derive from ComperableData<Data>");
 
-            medianValue = 0;
-            numberData = vector<Data>(dataSize);
+            medianValue = Data::max_median();
+            leftHeap = priority_queue<Data>();
+            rightHeap = priority_queue<Data, vector<Data>, greater<Data>>(); 
         }
 
-        void add_number(Data number)
+        void add_number(Data data)
         {
-            if(numberData.empty())
-            {
-                numberData.push_back(number);
-                medianValue = number;
+            if (leftHeap.size() > rightHeap.size()) 
+            { 
+                add_to_heap_left_larger(data);   
             }
-            else
-            {
-                binary_insertion_sort(number);
-                precompute_median_value();
+            else if(leftHeap.size() < rightHeap.size())
+            { 
+                add_to_heap_right_larger(data);
+            }
+            else //if (leftHeap.size() == rightHeap.size()) 
+            { 
+                add_to_heap_equal(data);
             }
         }
 
-        Data median() const
+        MedianType median() const
         {
             return medianValue;
         }
 
-        Data min() const
-        {
-            return numberData[0];
-        }
-
-        Data max() const
-        {
-            return numberData[numberData.size() - 1];
-        }
-
     private:
         //Holds a precomputed current median value
-        double medianValue;
+        MedianType medianValue;
 
-        //A vector containing all of the number data
-        vector<Data> numberData;
+        priority_queue<Data> leftHeap;
+        priority_queue<Data, vector<Data>, greater<Data>> rightHeap;
 
-        //Looks up where to insert the new data value in the sorted numberData vector 
-        int insertion_index_lookup(const Data& data, int low, int high) 
+        //Balances the two heaps and adds the new data based on the position to the median
+        void add_to_heap_left_larger(const Data& data)
         {
-            if (high <= low)
-            {
-                return (data.compare(numberData[low]) > 0) ? (low + 1) : low;
-            }
-
-            int mid = (low + high)/2;
-          
-            if(data.compare(numberData[mid]) == 0)
-            {
-                return mid + 1;
-            }
-            if(data.compare(numberData[mid]) > 0)
-            {
-                return insertion_index_lookup(data, mid + 1, high);
-            }
+            if (data.compare(medianValue) < 0) 
+            { 
+                rightHeap.push(leftHeap.top()); 
+                leftHeap.pop(); 
+                leftHeap.push(data); 
+            } 
             else
             {
-                return insertion_index_lookup(data, low, mid - 1);
-            }       
-        }
-
-        //Performs a binary search and inserts the new number in its sorted position
-        void binary_insertion_sort(const Data& data) 
-        {
-            int insertPos = insertion_index_lookup(data, 0, numberData.size() - 1);
-            numberData.insert(numberData.begin() + insertPos, data);
-        }
-
-        //Calculate median of vector
-        void precompute_median_value()
-        {
-            size_t size = numberData.size();
-
-            if (size % 2 == 0)
-            {
-                medianValue = (numberData[size / 2 - 1] + numberData[size / 2]) / 2;
+                rightHeap.push(data); 
             }
-            else 
+            medianValue = leftHeap.top().median_with(rightHeap.top()); 
+        }
+        
+        //Balances the two heaps and adds the new data based on the position to the median
+        void add_to_heap_right_larger(const Data& data)
+        {
+            if (data.compare(medianValue) > 0) 
+            { 
+                leftHeap.push(rightHeap.top()); 
+                rightHeap.pop(); 
+                rightHeap.push(data); 
+            } 
+            else
             {
-                medianValue = numberData[size / 2];
+                leftHeap.push(data); 
+            }
+            medianValue = leftHeap.top().median_with(rightHeap.top()); 
+        }
+        
+        //Adds the new data to the already balanced heaps based on the position to the median
+        void add_to_heap_equal(const Data& data)
+        {
+            if (data.compare(medianValue) < 0) 
+            { 
+                leftHeap.push(data); 
+                medianValue = leftHeap.top().as_median(); 
+            } 
+            else
+            { 
+                rightHeap.push(data); 
+                medianValue = rightHeap.top().as_median(); 
             }
         }
 };
