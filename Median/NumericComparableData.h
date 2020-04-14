@@ -3,34 +3,43 @@
 
 #include <limits>
 
-#include "Median/ComparableData.h"
+#include "ComparableData.h"
 
+/*
+* Helper class facilitating using ComparableData with basic numeric types (short, int, long, double...)
+*/ 
 template <typename T>
-class NumericData : public ComparableData<NumericData<T>, double>
+class NumericComparableData : public ComparableData<NumericComparableData<T>, double>
 {
     public:
-        NumericData()
+        NumericComparableData()
         {
         }
 
-        NumericData(T data)
+        NumericComparableData(T data)
         {
             this->data = data;
         }
 
-        NumericData(const NumericData& other)
+        NumericComparableData(const NumericComparableData& other)
         {
             this->data = other.data;
         }
 
-        NumericData(const NumericData&& other)
+        NumericComparableData(const NumericComparableData&& other)
         {
             this->data = other.data;
         }
 
-        NumericData& operator=(const NumericData&& other)
+        NumericComparableData& operator=(const NumericComparableData&& other)
         {
             this->data = other.data;
+            return *this;
+        }
+
+        NumericComparableData& operator=(const NumericComparableData& otherData) override
+        {
+            this->data = otherData.data;
             return *this;
         }
 
@@ -39,7 +48,13 @@ class NumericData : public ComparableData<NumericData<T>, double>
             return data; 
         }
 
-        int compare(const NumericData& otherData) const override
+        NumericComparableData& operator+=(const NumericComparableData& otherData) override
+        {
+            this->data += otherData.data;
+            return *this;
+        }
+
+        int compare(const NumericComparableData& otherData) const override
         {
             if(data > otherData)
             {
@@ -57,7 +72,7 @@ class NumericData : public ComparableData<NumericData<T>, double>
 
         int compare(const double& medianValue) const override
         {
-            return compare(NumericData((T)medianValue));
+            return compare(NumericComparableData((T)medianValue));
         }
 
         static double max_median()
@@ -70,7 +85,7 @@ class NumericData : public ComparableData<NumericData<T>, double>
             return (double)data;
         }
 
-        double median_with(const NumericData& otherData) const override
+        double median_with(const NumericComparableData& otherData) const override
         {
             return (data + otherData) / 2.0;
         }

@@ -5,7 +5,7 @@
 #include <time.h>
 #include <chrono> 
 
-#include "NumericData.h"
+#include "Median/NumericComparableData.h"
 #include "Median/MedianData.h"
 
 using namespace std;
@@ -14,7 +14,7 @@ using namespace std::chrono;
 void testInputExpectedOutput(vector<int> testData, double expectedMedian)
 {
     cout << "Test input [";
-    auto md = MedianData<NumericData<int>, double>();
+    auto md = MedianData<NumericComparableData<int>, double>();
     for_each(
         testData.begin(), 
         testData.end(), 
@@ -35,10 +35,10 @@ void stress_test()
     cout << "Running stress_test of [" << stressTestSize << "] insertions" << endl;
 
     srand (time(NULL));
-    auto md = MedianData<NumericData<int>, double>();
+    auto md = MedianData<NumericComparableData<int>, double>();
 
     long totalInsertionsRunTime = 0;
-    auto tmpData = NumericData<int>();
+    auto tmpData = NumericComparableData<int>();
     for (int i = 0; i < stressTestSize; i++)
     {
         tmpData.set_data(rand() % 100 + 1);

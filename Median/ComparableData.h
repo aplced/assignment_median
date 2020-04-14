@@ -41,7 +41,7 @@ public:
     * otherData - data to compare to
     * returns - true if greater, false otherwise
     */ 
-    bool operator >(const Data& otherData) const
+    bool operator>(const Data& otherData) const
     {
         return compare(otherData) > 0;
     }
@@ -51,10 +51,20 @@ public:
     * otherData - data to compare to
     * returns - true if less, false otherwise
     */ 
-    bool operator <(const Data& otherData) const
+    bool operator<(const Data& otherData) const
     {
         return compare(otherData) < 0;
     }
+
+    /*
+    * Required assignment operator by implementors
+    */ 
+    virtual Data& operator=(const Data& otherData) = 0;
+
+    /*
+    * Required assignment operator by implementors
+    */ 
+    virtual Data& operator+=(const Data& otherData) = 0;
 };
 
 #endif

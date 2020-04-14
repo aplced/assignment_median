@@ -6,8 +6,6 @@
 
 #include "ComparableData.h"
 
-using namespace std;
-
 template <typename Data, typename MedianType> 
 class MedianData
 {
@@ -17,12 +15,14 @@ class MedianData
             static_assert(std::is_base_of<ComparableData<Data, MedianType>, Data>::value, "type parameter of this class must derive from ComparableData<Data>");
 
             medianValue = Data::max_median();
-            leftHeap = priority_queue<Data>();
-            rightHeap = priority_queue<Data, vector<Data>, greater<Data>>(); 
+            leftHeap = std::priority_queue<Data>();
+            rightHeap = std::priority_queue<Data, std::vector<Data>, std::greater<Data>>(); 
         }
 
         void add_number(Data data)
         {
+            totalDataItems++;
+
             if (leftHeap.size() > rightHeap.size()) 
             { 
                 add_to_heap_left_larger(data);   
@@ -35,6 +35,18 @@ class MedianData
             { 
                 add_to_heap_equal(data);
             }
+
+            if(data > maxValue)
+            {
+                maxValue = data;
+            }
+
+            if(data < minValue)
+            {
+                minValue = data;
+            }
+
+            totalValue += data;
         }
 
         MedianType median() const
@@ -42,12 +54,41 @@ class MedianData
             return medianValue;
         }
 
+        int size() const
+        {
+            return totalDataItems;
+        }
+
+        Data max() const
+        {
+            return maxValue;
+        }
+
+        Data min() const
+        {
+            return minValue;
+        }
+
+        Data total() const
+        {
+            return totalValue;
+        }
+
+        Data mean() const
+        {
+            return totalValue/totalDataItems;
+        }
+
     private:
         //Holds a precomputed current median value
         MedianType medianValue;
+        Data maxValue;
+        Data minValue;
+        Data totalValue;
+        int totalDataItems;
 
-        priority_queue<Data> leftHeap;
-        priority_queue<Data, vector<Data>, greater<Data>> rightHeap;
+        std::priority_queue<Data> leftHeap;
+        std::priority_queue<Data, std::vector<Data>, std::greater<Data>> rightHeap;
 
         //Balances the two heaps and adds the new data based on the position to the median
         void add_to_heap_left_larger(const Data& data)
