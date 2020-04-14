@@ -31,25 +31,23 @@ void testInputExpectedOutput(vector<int> testData, double expectedMedian)
 
 void stress_test()
 {
-    const int stressTestSize = 10000000;
+    const int stressTestSize = 100000000;
     cout << "Running stress_test of [" << stressTestSize << "] insertions" << endl;
 
     srand (time(NULL));
     auto md = MedianData<NumericComparableData<int>, double>();
-
-    long totalInsertionsRunTime = 0;
-    auto tmpData = NumericComparableData<int>();
+    auto insertionTimes = MedianData<NumericComparableData<unsigned long long>, double>();
     for (int i = 0; i < stressTestSize; i++)
     {
-        tmpData.set_data(rand() % 100 + 1);
         auto start = high_resolution_clock::now();
-        md.add_number(tmpData);
+        md.add_number(rand());
         auto stop = high_resolution_clock::now(); 
-        totalInsertionsRunTime += duration_cast<nanoseconds>(stop - start).count();
+        insertionTimes.add_number(duration_cast<nanoseconds>(stop - start).count());
     }
 
     cout << "Accumulated median value " << md.median() << " from " << stressTestSize << " random int insertions" << endl;
-    cout << "Total time [" << totalInsertionsRunTime << "]ns Average time per insertion [" << totalInsertionsRunTime / stressTestSize << "]ns" << endl;
+    cout << "Total time [" << insertionTimes.total() << "]ns Average time per insertion [" << insertionTimes.mean() << "]ns" << endl;
+    cout << "Insertion times Min[" << insertionTimes.min() << "]ns Max[" << insertionTimes.max() << "]ns Median[" << insertionTimes.median() << "]ns" << endl;
 }
 
 int main()
