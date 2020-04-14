@@ -54,6 +54,11 @@ class NumericComparableData : public ComparableData<NumericComparableData<T>, do
             return *this;
         }
 
+        NumericComparableData operator/(int number) override
+        {
+            return NumericComparableData(data/number);
+        }
+
         int compare(const NumericComparableData& otherData) const override
         {
             if(data > otherData)
@@ -75,9 +80,29 @@ class NumericComparableData : public ComparableData<NumericComparableData<T>, do
             return compare(NumericComparableData((T)medianValue));
         }
 
+        static NumericComparableData zero_value()
+        {
+            return NumericComparableData(0);
+        }
+
+        static NumericComparableData max_value()
+        {
+            return NumericComparableData(std::numeric_limits<T>::max());
+        }
+
+        static NumericComparableData min_value()
+        {
+            return NumericComparableData(std::numeric_limits<T>::min());
+        }
+
+        static double zero_median()
+        {
+            return 0.0;
+        }
+
         static double max_median()
         {
-            return (double)std::numeric_limits<T>::max();
+            return (double)max_value();
         }
 
         double as_median() const override

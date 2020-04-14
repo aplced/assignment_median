@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\MyProgram.exe",
+            "program": "${workspaceFolder}\\Median.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

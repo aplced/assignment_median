@@ -65,6 +65,11 @@ public:
     * Required assignment operator by implementors
     */ 
     virtual Data& operator+=(const Data& otherData) = 0;
+
+    /*
+    * Required division by integer operator by implementors
+    */ 
+    virtual Data operator/(int number) = 0;
 };
 
 #endif

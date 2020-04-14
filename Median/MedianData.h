@@ -16,7 +16,12 @@ class MedianData
 
             medianValue = Data::max_median();
             leftHeap = std::priority_queue<Data>();
-            rightHeap = std::priority_queue<Data, std::vector<Data>, std::greater<Data>>(); 
+            rightHeap = std::priority_queue<Data, std::vector<Data>, std::greater<Data>>();
+
+            totalDataItems = 0;
+            maxValue = Data::min_value();
+            minValue = Data::max_value(); 
+            totalValue = Data::zero_value();
         }
 
         void add_number(Data data)
@@ -49,9 +54,9 @@ class MedianData
             totalValue += data;
         }
 
-        MedianType median() const
+        bool empty() const
         {
-            return medianValue;
+            return size() == 0;
         }
 
         int size() const
@@ -61,12 +66,18 @@ class MedianData
 
         Data max() const
         {
-            return maxValue;
+            if(empty())
+                return Data::zero_value();
+            else
+                return maxValue;
         }
 
         Data min() const
         {
-            return minValue;
+            if(empty())
+                return Data::zero_value();
+            else
+                return minValue;
         }
 
         Data total() const
@@ -76,7 +87,18 @@ class MedianData
 
         Data mean() const
         {
-            return totalValue/totalDataItems;
+            if(empty())
+                return Data::zero_value();
+            else
+                return totalValue/totalDataItems;
+        }
+
+        MedianType median() const
+        {
+            if(empty())
+                return Data::zero_median();
+            else
+                return medianValue;
         }
 
     private:
