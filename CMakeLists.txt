@@ -16,3 +16,6 @@ include_directories(${CATCH_INCLUDE_DIR})
 set(TEST_SOURCES test/test_median.cpp)
 add_executable(${PROJECT_NAME}_tests ${TEST_SOURCES} )
 target_link_libraries(${PROJECT_NAME}_tests PUBLIC Catch)
+
+enable_testing()
+add_test(test_median ${PROJECT_NAME}_tests)
