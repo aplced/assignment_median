@@ -1,10 +1,12 @@
 #ifndef __INT_MEDIAN_H__
 #define __INT_MEDIAN_H__
 
-#include "Median/median.h"
+#include <limits>
+
+#include "Median/ComparableData.h"
 
 template <typename T>
-class NumericData : public ComperableData<NumericData<T>, double>
+class NumericData : public ComparableData<NumericData<T>, double>
 {
     public:
         NumericData()
@@ -60,7 +62,7 @@ class NumericData : public ComperableData<NumericData<T>, double>
 
         static double max_median()
         {
-            return (double)numeric_limits<T>::max();
+            return (double)std::numeric_limits<T>::max();
         }
 
         double as_median() const override

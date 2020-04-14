@@ -4,39 +4,17 @@
 #include <algorithm>
 #include <queue>
 
+#include "ComparableData.h"
+
 using namespace std;
 
-template <typename Data, typename MedianType>
-class ComperableData
-{
-public:
-    typedef Data value_type; 
-
-    virtual int compare(const Data& otherData) const = 0;
-
-    virtual int compare(const MedianType& medianValue) const = 0;
-    
-    virtual MedianType as_median() const = 0;
-
-    virtual MedianType median_with(const Data& otherData) const = 0;
-
-    bool operator >(const Data& otherData) const
-    {
-        return compare(otherData) > 0;
-    }
-
-    bool operator <(const Data& otherData) const
-    {
-        return compare(otherData) < 0;
-    }
-};
-
-template <typename Data, typename MedianType> class MedianData
+template <typename Data, typename MedianType> 
+class MedianData
 {
     public:
         MedianData() 
         {
-            static_assert(std::is_base_of<ComperableData<Data, MedianType>, Data>::value, "type parameter of this class must derive from ComperableData<Data>");
+            static_assert(std::is_base_of<ComparableData<Data, MedianType>, Data>::value, "type parameter of this class must derive from ComparableData<Data>");
 
             medianValue = Data::max_median();
             leftHeap = priority_queue<Data>();

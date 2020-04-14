@@ -5,8 +5,8 @@
 #include <time.h>
 #include <chrono> 
 
-#include "Median/median.h"
-#include "int_median.h"
+#include "NumericData.h"
+#include "Median/MedianData.h"
 
 using namespace std;
 using namespace std::chrono;
